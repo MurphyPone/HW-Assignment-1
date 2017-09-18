@@ -9,6 +9,11 @@ public class FileHandler {
 		path = "/../Datawords.text"; //..means go up a dir
 		file = new File(path);
 	}
+	
+	public FileHandler(String myPath) {
+		path = myPath ; //..means go up a dir
+		file = new File(path);
+	}
 
 }
 
