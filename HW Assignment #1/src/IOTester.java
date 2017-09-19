@@ -21,7 +21,7 @@ public class IOTester {
 			return null;
 		}
 		
-		return input;
+		return input;//
 	}
 
 	public static PrintWriter openDictionary(String fname) {

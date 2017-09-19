@@ -19,7 +19,7 @@ public class FileHandler {
 			return null;
 		}
 		
-		return input;
+		return input;//
 	}
 
 	public PrintWriter openDictionary(String fname) {
