@@ -21,6 +21,11 @@ public class FileHandler {
 		
 		return input;//
 	}
+	
+	public FileHandler(String myPath) {
+		path = myPath ; //..means go up a dir
+		file = new File(path);
+	}
 
 	public PrintWriter openDictionary(String fname) {
 		File file = new File(fname);

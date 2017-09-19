@@ -62,6 +62,7 @@ public class IOTester {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+<<<<<<< HEAD
 		if (args.length < 2) { // Need two args, input and output files
 			System.out.println("No file given, not enough args");
 			System.exit(1);
@@ -79,5 +80,8 @@ public class IOTester {
 		
 		in.close();
 		out.close();
+=======
+		System.out.println("I am a nothingburger");
+>>>>>>> branch 'master' of https://github.com/MurphyPone/HW-Assignment-1
 	}
 }
