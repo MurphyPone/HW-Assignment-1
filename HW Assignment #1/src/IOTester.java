@@ -18,12 +18,13 @@ public class IOTester {
 			//TODO CHECK FOR BALANCED BRACES
 			
 			while(input.hasNext()) {
-				private String temp = "";
-				if(input.next == '{')  {
-					temp = input.next();
-					if(temp.contains('{')) {
+				if (bracketChecker(input.next()) ) { 
+					//TODO WRITE Brackets Balanced
+				} else {
+					//TODO WRITE Brackets Not Balanced
 				}
 			}
+			
 			
 			//FROM StackOverflow
 				//while(input.hasNext())
@@ -45,6 +46,23 @@ public class IOTester {
 			return null;
 		}
 		return input;
+	}
+		
+	//Character checker
+	public static boolean bracketChecker(String input) {
+		int numOpen = 0;	//Make these fields
+		int numClose = 0;	//won't keep track of whole file
+		
+        for(int i = 0; i < input.length(); i++) //Modified from Stack
+            if(input.charAt(i) == '{')
+            	numOpen ++;
+        	if(input.charAt(i) == '}')
+        		numClose ++;
+
+        if(numOpen == numClose)
+        	return true;
+        else 
+        	return false;
 	}
 
 	//For writing
