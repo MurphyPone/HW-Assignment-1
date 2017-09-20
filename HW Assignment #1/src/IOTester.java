@@ -3,13 +3,13 @@ import java.io.*;
 import java.util.Scanner;
 
 public class IOTester {
-	//CONSOLE DRIVEN PROGRAM, NO NEED FOR O-O nonsense	//PUSHed AFTER SCHOOL
-	//TODO Method that returns scanner of words.txt
-	//TODO Method that returns a PrintWriter of ramblex dictionary.java
-	//TODO NEED TO MAKE A FORMATTIG METHOD WHICH WILL BE SENT INTO THE RAMBLEX FILE
+	//TODO Method that returns scanner of first arg 									√√√√
+	//TODO Method that returns a PrintWriter second arg								√√√√
+	//TODO Method that Compares two files 
 	
 	//fields for bracket checking
 	public static int numBraces = 0;
+	public static String argStatus; //This is poor programming
 	
 	//For reading
 	public static Scanner openWords(String fname) {
@@ -18,44 +18,40 @@ public class IOTester {
 
 		try {	//Check to see if the requested input file exists in the given directory
 			input = new Scanner(file);	//If so, create a new Scanner to grab the data
-		
 			braceChecker(input);
-			
+			argStatus = "\n .\n";
 		} catch (FileNotFoundException ex) {	//Else, print to console the reason why and create that file with the error message inside
 			System.out.println("error u goob, no can do bc of " + ex.toString());
-			//PROVIDE THIS MESSAGE TO THE OUTPUT FILE: "Part 1: Unable to Open File"
+			/////ISSSUE HERE argStatus = "Part 1: Unable to Open File \n\n"; //Skips a line and adds the blank file needed for step 2.
 			return null;
 		}
 		return input;
 	}
 		
-	//Character checker
+	//Brace checker
 	public static boolean braceChecker(Scanner input) {
-        
-		while(input.hasNext()) {
-			if (braceChecker(input.next()) ) { 
-				
-			} else {
-				
-			}		
-	
+        String temp;	//Grabs the current line of the input 
 		
-		for(int i = 0; i < input.length(); i++) {  //Modified from Stack
-            if(input.charAt(i) == '{')
-            	numBraces ++;
-        	if(input.charAt(i) == '}')
-        		numBraces --;
-        } 
+        //Running difference between { and }
+        while(input.hasNext()) {
+			temp = input.next();
+			
+			for(int i = 0; i < temp.length(); i++) {  
+				//If numBraces ever dips below 0, then they ain't balanced!
+				if(numBraces >= 0 ) { 
+		            if(temp.charAt(i) == '{')
+		            		numBraces ++;			//So smart, thanks Aidan
+		            if(temp.charAt(i) == '}')
+		        			numBraces --;
+				} else
+					return false;
+	        }
+		}
 
-        if(numBraces != 0) {
-        	//TODO WRITE Braces Balanced
-			System.out.println("Braces Balanced");
-        	return false;
-        } else { 
-        	//TODO WRITE Braces Not Balanced
-
-        	return true;
-        }
+        if(numBraces != 0) 
+        		return false;
+        else 
+	        	return true;
 	}
 
 	//For writing
@@ -90,7 +86,6 @@ public class IOTester {
 		output.println("\t};\n}");
 	}
 	
-	
 	//COMPARE TWO FILES
 	public static void compare(File one, File two) {
 		Scanner oneSc;
@@ -104,7 +99,7 @@ public class IOTester {
 			 twoSc = new Scanner(two);
 		 } catch(FileNotFoundException ex) { 
 			 //TODO Write "Part 2 : unable to open file
-			 System.out.println("Part 2 : unable to open file");
+			 System.out.print("Part 2 : unable to open file");
 			 return;
 		 }
 			
@@ -132,13 +127,26 @@ public class IOTester {
 			System.exit(1);
 		}
 		
+		
+		//Creates PrintWriter to output to second file --Created before in bc in writes to output.txt according to contents of first arg
+		PrintWriter out = openDictionary(args[1]);
+		//Prints a blank line or an error message
+		out.println(argStatus);
+
+		
 		//Reads in first File
 		Scanner in = openWords(args[0]); // First argument passed in via command line
-		if (in == null)	
-			System.exit(1); //If it doesn't exist, then exit 
+		
+		//Checks if braces are balanced and modifies 2nd arg file accordingly
+		System.out.println("Braces Balanced : " + braceChecker(in) );
+		if(braceChecker(in))
+			out.print("Braces Balanced\n");
+		else 
+			out.print("Braces Not Balanced\n");
+		
+		if (in == null)	//Is this necessary (try/catch in openWords does the same?)
+			System.exit(1); 
 
-		//Creates PrintWrite to output to second file
-		PrintWriter out = openDictionary(args[1]);
 		
 
 		in.close();
