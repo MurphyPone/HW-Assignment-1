@@ -16,9 +16,14 @@ public class IOTester {
 		try {	//Check to see if the requested input file exists in the given directory
 			input = new Scanner(file);	//If so, create a new Scanner to grab the data
 			//TODO CHECK FOR BALANCED BRACES
-			//for(Line : input)
-			//	input numOpenBrackets +=
-			//Repeat for numClose
+			
+			while(input.hasNext()) {
+				private String temp = "";
+				if(input.next == '{')  {
+					temp = input.next();
+					if(temp.contains('{')) {
+				}
+			}
 			
 			//FROM StackOverflow
 				//while(input.hasNext())
