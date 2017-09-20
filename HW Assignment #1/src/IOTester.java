@@ -120,6 +120,20 @@ public class IOTester {
 	}
 	
 	//CREATE ADLIB FROM 3RD ARGUMENT
+	
+	//Adlib reader
+	public static void prompt(Scanner input) {
+		//ArrayList responses = new ArrayList();
+		
+		//while(input.hasNext() )
+			//find tags
+			//store tags in var partOfSpeech;
+			//System.out.println("Give a " + partOfSpeech);
+			//response = kb.next()
+			//responses.add(response);
+	}
+	
+	//Adlib writer
 
 	public static void main(String[] args) {
 		if (args.length < 2) { // Need two args, input and output files
@@ -144,11 +158,12 @@ public class IOTester {
 		else 
 			out.print("Braces Not Balanced\n");
 		
+		Scanner adlib = openWords(args[2]);
+		prompt(adlib);
+		
 		if (in == null)	//Is this necessary (try/catch in openWords does the same?)
 			System.exit(1); 
-
 		
-
 		in.close();
 		out.close();
 
