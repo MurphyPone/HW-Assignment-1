@@ -3,11 +3,37 @@ import java.io.*;
 import java.util.Scanner;
 
 public class FileHandler {
-	// Method that returWns scanner of words.txt
-	// Method that returns a PrintWriter of ramblex dictionary.java
+	//DONT NEED THIS 
 
-	// NEED TO MAKE A FORMATTIG METHOD WHICH WILL BE SENT INTO THE RAMBLEX FILE
+	//Private Variables
+	File file;
+	Scanner reader;
+	
+	//Constructor		??Poor programming to have a beefy constructor like this?
+	public FileHandler(String fname) {
+		//Constructor attempts to open the given text file
+		Scanner reader = createReader(fname);
+		reader.close();
+	}
+	
+	//Helped method
+	public Scanner createReader(String fname) {  //Does this need to be void?
+		File file = new File(fname);
+		Scanner input = null;
 
+		try {
+			input = new Scanner(file);	//Access Scanner functions of FileHandler obj by doing x.input.whatever() ??
+		} catch (FileNotFoundException ex) {
+			System.out.println("error u goob, no can do bc of " + ex.toString());
+			//return null Substitute null with program close bc if there ain't a valid file then just give up 
+			return null;
+		}
+	}
+	
+	
+	
+	
+	/**
 	public Scanner openWords(String fname) {
 		File file = new File(fname);
 		Scanner input = null;
@@ -20,11 +46,6 @@ public class FileHandler {
 		}
 		
 		return input;//
-	}
-	
-	public FileHandler(String myPath) {
-		path = myPath ; //..means go up a dir
-		file = new File(path);
 	}
 
 	public PrintWriter openDictionary(String fname) {
@@ -56,4 +77,5 @@ public class FileHandler {
 	public void writeEntryFooter(PrintWriter output) {
 		output.println("\t};\n}");
 	}
+	*/
 }

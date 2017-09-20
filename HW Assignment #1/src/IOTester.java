@@ -3,34 +3,53 @@ import java.io.*;
 import java.util.Scanner;
 
 public class IOTester {
-	// Method that returns scanner of words.txt
-	// Method that returns a PrintWriter of ramblex dictionary.java
+	//CONSOLE DRIVEN PROGRAM, NO NEED FOR O-O nonsense
+	//TODO Method that returns scanner of words.txt
+	//TODO Method that returns a PrintWriter of ramblex dictionary.java
+	//TODO NEED TO MAKE A FORMATTIG METHOD WHICH WILL BE SENT INTO THE RAMBLEX FILE
 
-	// NEED TO MAKE A FORMATTIG METHOD WHICH WILL BE SENT INTO THE RAMBLEX FILE
-
+	//For reading
 	public static Scanner openWords(String fname) {
 		File file = new File(fname);
 		Scanner input = null;
 
-		try {
-			input = new Scanner(file);
-			//CHECK FOR BALANCED BRACES
-		} catch (FileNotFoundException ex) {
+		try {	//Check to see if the requested input file exists in the given directory
+			input = new Scanner(file);	//If so, create a new Scanner to grab the data
+			//TODO CHECK FOR BALANCED BRACES
+			//for(Line : input)
+			//	input numOpenBrackets +=
+			//Repeat for numClose
+			
+			//FROM StackOverflow
+				//while(input.hasNext())
+				//	ArrayList.add(input.next()) --Automatically uses whitespace as delimiter 
+				//								-- Might cause problems bc of things like "Foo(){" no whitespace, and would not return tru 
+			
+				//for(i = 0; i <ArraList.length(); i++ {
+				//	if(ArraList.get(i).contains("}")
+				//		numOpen ++;
+				//}
+			
+			//If(#"{" chars == #"}" chars)
+			//	Write "Braces Balanced"
+			//Else
+			//	Write "Braces Not Balanced"
+		} catch (FileNotFoundException ex) {	//Else, print to console the reason why and create that file with the error message inside
 			System.out.println("error u goob, no can do bc of " + ex.toString());
 			//PROVIDE THIS MESSAGE TO THE OUTPUT FILE: "Part 1: Unable to Open File"
 			return null;
 		}
-		
-		return input;//
+		return input;
 	}
 
+	//For writing
 	public static PrintWriter openDictionary(String fname) {
 		File file = new File(fname);
 		PrintWriter output = null;
 
-		try {
-			output = new PrintWriter(file);
-		} catch (FileNotFoundException ex) {
+		try {	//Check to see if the requested input file exists in the given directory
+			output = new PrintWriter(file);	//If so, create a new PrintWriter to modify the contents of the file
+		} catch (FileNotFoundException ex) {	//Should not be necessary to include some error output to file bc the PrintWriter should not get created if the file does not exist
 			System.out.println("error u goob, no can do bc of " + ex.toString());
 			return null;
 		}
@@ -38,7 +57,7 @@ public class IOTester {
 	}
 
 	public static void writeEntry(Scanner input, PrintWriter output) {
-		//DISPLAY A BLANK LIN IN THE OUTPUT FILE
+		//TODO 2. DISPLAY A BLANK LINE IN THE OUTPUT FILE
 		while (input.hasNextLine()) {
 			String word = input.nextLine().toUpperCase(); // Smart Programming!
 
@@ -57,20 +76,33 @@ public class IOTester {
 	
 	
 	//COMPARE TWO FILES
+	public static void compare(File one, File two) {
+		/* Try/Catch{ //TODO Write "Part 2 : unable to open file 
+		 * 
+		 * if(one.length != two.length)
+		 * 	return false
+		 * else 
+		 * 	while(one.hasNext())
+		 * 		if( one.next() != two.next() )
+		 * 			//TODO Write "Files Not Identical"
+		 * 		else 
+		 * 			//TODO Write "Files Identical"
+		 */
+		
+		
+	}
 	
 	//CREATE ADLIB FROM 3RD ARGUMENT
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-<<<<<<< HEAD
 		if (args.length < 2) { // Need two args, input and output files
 			System.out.println("No file given, not enough args");
 			System.exit(1);
 		}
+		
 		Scanner in = openWords(args[0]); // First argument passed in via command line
 		if (in == null)
 			System.exit(1);
-		;
 
 		PrintWriter out = openDictionary(args[1]);
 
@@ -80,8 +112,6 @@ public class IOTester {
 		
 		in.close();
 		out.close();
-=======
-		System.out.println("I am a nothingburger");
->>>>>>> branch 'master' of https://github.com/MurphyPone/HW-Assignment-1
+
 	}
 }
