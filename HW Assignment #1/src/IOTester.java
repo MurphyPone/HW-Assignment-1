@@ -7,7 +7,10 @@ public class IOTester {
 	//TODO Method that returns scanner of words.txt
 	//TODO Method that returns a PrintWriter of ramblex dictionary.java
 	//TODO NEED TO MAKE A FORMATTIG METHOD WHICH WILL BE SENT INTO THE RAMBLEX FILE
-
+	
+	//fields for bracket checking
+	public static int numBraces = 0;
+	
 	//For reading
 	public static Scanner openWords(String fname) {
 		File file = new File(fname);
@@ -15,31 +18,9 @@ public class IOTester {
 
 		try {	//Check to see if the requested input file exists in the given directory
 			input = new Scanner(file);	//If so, create a new Scanner to grab the data
-			//TODO CHECK FOR BALANCED BRACES
+		
+			braceChecker(input);
 			
-			while(input.hasNext()) {
-				if (bracketChecker(input.next()) ) { 
-					//TODO WRITE Brackets Balanced
-				} else {
-					//TODO WRITE Brackets Not Balanced
-				}
-			}
-			
-			
-			//FROM StackOverflow
-				//while(input.hasNext())
-				//	ArrayList.add(input.next()) --Automatically uses whitespace as delimiter 
-				//								-- Might cause problems bc of things like "Foo(){" no whitespace, and would not return tru 
-			
-				//for(i = 0; i <ArraList.length(); i++ {
-				//	if(ArraList.get(i).contains("}")
-				//		numOpen ++;
-				//}
-			
-			//If(#"{" chars == #"}" chars)
-			//	Write "Braces Balanced"
-			//Else
-			//	Write "Braces Not Balanced"
 		} catch (FileNotFoundException ex) {	//Else, print to console the reason why and create that file with the error message inside
 			System.out.println("error u goob, no can do bc of " + ex.toString());
 			//PROVIDE THIS MESSAGE TO THE OUTPUT FILE: "Part 1: Unable to Open File"
@@ -49,20 +30,32 @@ public class IOTester {
 	}
 		
 	//Character checker
-	public static boolean bracketChecker(String input) {
-		int numOpen = 0;	//Make these fields
-		int numClose = 0;	//won't keep track of whole file
+	public static boolean braceChecker(Scanner input) {
+        
+		while(input.hasNext()) {
+			if (braceChecker(input.next()) ) { 
+				
+			} else {
+				
+			}		
+	
 		
-        for(int i = 0; i < input.length(); i++) //Modified from Stack
+		for(int i = 0; i < input.length(); i++) {  //Modified from Stack
             if(input.charAt(i) == '{')
-            	numOpen ++;
+            	numBraces ++;
         	if(input.charAt(i) == '}')
-        		numClose ++;
+        		numBraces --;
+        } 
 
-        if(numOpen == numClose)
-        	return true;
-        else 
+        if(numBraces != 0) {
+        	//TODO WRITE Braces Balanced
+			System.out.println("Braces Balanced");
         	return false;
+        } else { 
+        	//TODO WRITE Braces Not Balanced
+
+        	return true;
+        }
 	}
 
 	//For writing
@@ -100,19 +93,35 @@ public class IOTester {
 	
 	//COMPARE TWO FILES
 	public static void compare(File one, File two) {
-		/* Try/Catch{ //TODO Write "Part 2 : unable to open file 
-		 * 
-		 * if(one.length != two.length)
-		 * 	return false
-		 * else 
-		 * 	while(one.hasNext())
-		 * 		if( one.next() != two.next() )
-		 * 			//TODO Write "Files Not Identical"
-		 * 		else 
-		 * 			//TODO Write "Files Identical"
-		 */
+		Scanner oneSc;
+		Scanner twoSc;	//Creates and deletes too many Scanners
 		
+		String oneStr;
+		String twoStr;
 		
+		try {
+			 oneSc = new Scanner(one); 
+			 twoSc = new Scanner(two);
+		 } catch(FileNotFoundException ex) { 
+			 //TODO Write "Part 2 : unable to open file
+			 System.out.println("Part 2 : unable to open file");
+			 return;
+		 }
+			
+		while (oneSc.hasNext() ) {
+			oneStr = oneSc.next();	//Creates strings from scanners from files passed in as arguments
+			twoStr = twoSc.next();
+			
+			for(int i = 0; i < oneStr.length(); i++) {  //Modified from Stack
+	            if(oneStr.charAt(i) != twoStr.charAt(i) ) {	//If every character is not identical, then the files not
+	            	//TODO Write "Files Not Identical"
+	            	break;
+	            }
+			}
+		}
+		//TODO Write "Files Identical"
+		oneSc.close();
+		twoSc.close();
 	}
 	
 	//CREATE ADLIB FROM 3RD ARGUMENT
@@ -123,16 +132,15 @@ public class IOTester {
 			System.exit(1);
 		}
 		
+		//Reads in first File
 		Scanner in = openWords(args[0]); // First argument passed in via command line
-		if (in == null)
-			System.exit(1);
+		if (in == null)	
+			System.exit(1); //If it doesn't exist, then exit 
 
+		//Creates PrintWrite to output to second file
 		PrintWriter out = openDictionary(args[1]);
-
-		writeEntryHeader(out);
-		writeEntry(in, out);
-		writeEntryFooter(out);
 		
+
 		in.close();
 		out.close();
 

@@ -1,0 +1,4 @@
+public class RamblexDictionary { 
+	private String[] words = {
+	};
+}
