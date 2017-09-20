@@ -3,7 +3,7 @@ import java.io.*;
 import java.util.Scanner;
 
 public class IOTester {
-	//CONSOLE DRIVEN PROGRAM, NO NEED FOR O-O nonsense
+	//CONSOLE DRIVEN PROGRAM, NO NEED FOR O-O nonsense	//PUSHed AFTER SCHOOL
 	//TODO Method that returns scanner of words.txt
 	//TODO Method that returns a PrintWriter of ramblex dictionary.java
 	//TODO NEED TO MAKE A FORMATTIG METHOD WHICH WILL BE SENT INTO THE RAMBLEX FILE
