@@ -76,23 +76,25 @@ public class IOTester {
 		Scanner scanOne;
 		Scanner scanTwo;
 		
-		String oneStr;	//Declares placeholder strings for each File>Scanner
-		String twoStr;
-		
-		try {
-			 scanOne = new Scanner(first); 
-			 scanTwo = new Scanner(second);
-		 } catch(FileNotFoundException ex) { 
-			 output.print("Part 2 : unable to open file");
-			 return;	
-		 }
+		String strOne;
+		String strTwo;
+
+		try {							//Check to see if the requested input file exists in the given directory
+			scanOne = new Scanner(first);	//If so, create a new Scanner to grab the data
+			scanTwo = new Scanner(second);
+			//TODO create PrintWriter here too to check if output file is present??
+		} catch (FileNotFoundException ex) {	//Else, print to console the reason why and create that file with the error message inside
+			System.out.println("Part 2 error u goob, no can do bc of " + ex.toString());
+			output.print("Part 2: Unable to Open File \n\n"); //Skips a line and adds the blank file needed for step 2.
+			return;
+		}
 			
 		while (scanOne.hasNext() ) {	//If one File>Scanner has stuff in it, try to compare to the other
-			oneStr = scanOne.next();	//Creates strings from scanners from files passed in as arguments
-			twoStr = scanTwo.next();
+			strOne = scanOne.next();	//Creates strings from scanners from files passed in as arguments
+			strTwo = scanTwo.next();
 			
-			for(int i = 0; i < oneStr.length(); i++) {  
-	            if(oneStr.charAt(i) != twoStr.charAt(i) ) {	//If every character is not identical, then the files not
+			for(int i = 0; i < strOne.length(); i++) {  
+	            if(strOne.charAt(i) != strTwo.charAt(i) ) {	//If every character is not identical, then the files not
 	            		output.print("Files Not Identical");
 	            		scanOne.close();
 	            		scanTwo.close();
