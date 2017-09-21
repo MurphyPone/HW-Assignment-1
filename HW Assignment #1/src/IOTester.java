@@ -9,20 +9,19 @@ public class IOTester {
 	
 	//fields for bracket checking
 	public static int numBraces = 0;
-	public static String argStatus; //This is poor programming
 	
 	//For reading
-	public static Scanner openWords(String fname) {
+	public static Scanner openWords(String fname, PrintWriter output) {
 		File file = new File(fname);
 		Scanner input = null;
 
-		try {	//Check to see if the requested input file exists in the given directory
+		try {							//Check to see if the requested input file exists in the given directory
 			input = new Scanner(file);	//If so, create a new Scanner to grab the data
 			braceChecker(input);
-			argStatus = "\n .\n";
 		} catch (FileNotFoundException ex) {	//Else, print to console the reason why and create that file with the error message inside
 			System.out.println("error u goob, no can do bc of " + ex.toString());
-			/////ISSSUE HERE argStatus = "Part 1: Unable to Open File \n\n"; //Skips a line and adds the blank file needed for step 2.
+			output.print("Part 1: Unable to Open File \n\n"); //Skips a line and adds the blank file needed for step 2.
+			
 			return null;
 		}
 		return input;
@@ -67,59 +66,45 @@ public class IOTester {
 		}
 		return output;
 	}
-
-	public static void writeEntry(Scanner input, PrintWriter output) {
-		//TODO 2. DISPLAY A BLANK LINE IN THE OUTPUT FILE
-		while (input.hasNextLine()) {
-			String word = input.nextLine().toUpperCase(); // Smart Programming!
-
-			if (word.length() >= 3 && word.length() <= 5) {
-				output.println("\t\t\"" + word + "\",");
-			}
-		}
-	}
 	
-	public static void writeEntryHeader(PrintWriter output) {
-		output.println("public class RamblexDictionary { \n\tprivate String[] words = {");
-	}
-	public static void writeEntryFooter(PrintWriter output) {
-		output.println("\t};\n}");
-	}
 	
 	//COMPARE TWO FILES
-	public static void compare(File one, File two) {
-		Scanner oneSc;
-		Scanner twoSc;	//Creates and deletes too many Scanners
+	public static void compareRead(String one, String two, PrintWriter output) {
+		File first = new File(one);
+		File second = new File(two);
 		
-		String oneStr;
+		Scanner scanOne;
+		Scanner scanTwo;
+		
+		String oneStr;	//Declares placeholder strings for each File>Scanner
 		String twoStr;
 		
 		try {
-			 oneSc = new Scanner(one); 
-			 twoSc = new Scanner(two);
+			 scanOne = new Scanner(first); 
+			 scanTwo = new Scanner(second);
 		 } catch(FileNotFoundException ex) { 
-			 //TODO Write "Part 2 : unable to open file
-			 System.out.print("Part 2 : unable to open file");
-			 return;
+			 output.print("Part 2 : unable to open file");
+			 return;	
 		 }
 			
-		while (oneSc.hasNext() ) {
-			oneStr = oneSc.next();	//Creates strings from scanners from files passed in as arguments
-			twoStr = twoSc.next();
+		while (scanOne.hasNext() ) {	//If one File>Scanner has stuff in it, try to compare to the other
+			oneStr = scanOne.next();	//Creates strings from scanners from files passed in as arguments
+			twoStr = scanTwo.next();
 			
-			for(int i = 0; i < oneStr.length(); i++) {  //Modified from Stack
+			for(int i = 0; i < oneStr.length(); i++) {  
 	            if(oneStr.charAt(i) != twoStr.charAt(i) ) {	//If every character is not identical, then the files not
-	            	//TODO Write "Files Not Identical"
-	            	break;
+	            		output.print("Files Not Identical");
+	            		scanOne.close();
+	            		scanTwo.close();
+	            		return;
 	            }
 			}
 		}
-		//TODO Write "Files Identical"
-		oneSc.close();
-		twoSc.close();
+		
+		output.print("Files Identical");
+		scanOne.close();
+		scanTwo.close();
 	}
-	
-	//CREATE ADLIB FROM 3RD ARGUMENT
 	
 	//Adlib reader
 	public static void prompt(Scanner input) {
@@ -133,39 +118,62 @@ public class IOTester {
 			//responses.add(response);
 	}
 	
-	//Adlib writer
-
+	/*Args in should be as follows:
+	 * any.txt  	<-- This should be a .java 
+	 * output.txt			
+	 * file1.txt
+	 * file2.txt
+	 * compareResult.txt
+	 * adlibIn.txt
+	 * adlibOut.txt
+	 */
 	public static void main(String[] args) {
 		if (args.length < 2) { // Need two args, input and output files
 			System.out.println("No file given, not enough args");
 			System.exit(1);
 		}
-		
-		
-		//Creates PrintWriter to output to second file --Created before in bc in writes to output.txt according to contents of first arg
+	
+	//PART ONE----------------------------------------------------------------
+		//Creates PrintWriter to output to second file 
 		PrintWriter out = openDictionary(args[1]);
 		//Prints a blank line or an error message
-		out.println(argStatus);
-
 		
 		//Reads in first File
-		Scanner in = openWords(args[0]); // First argument passed in via command line
+		Scanner in = openWords(args[0], out); // First argument passed in via command line
 		
 		//Checks if braces are balanced and modifies 2nd arg file accordingly
-		System.out.println("Braces Balanced : " + braceChecker(in) );
-		if(braceChecker(in))
-			out.print("Braces Balanced\n");
-		else 
-			out.print("Braces Not Balanced\n");
+		if(in != null) {
+			System.out.println("Braces Balanced : " + braceChecker(in) );
+			in.reset();
+			
+			if(braceChecker(in))
+				out.print("Braces Balanced\n");
+			else 
+				out.print("Braces Not Balanced\n");
+			
+			in.close();
+		}
 		
-		Scanner adlib = openWords(args[2]);
+	//PART TWO----------------------------------------------------------------
+		
+		//Creates PrintWriter(s)? for the compare results for the 5th argument 
+		PrintWriter compResult = openDictionary(args[4]);
+		
+		
+		//TODO can I just reuse my openWords method? and then do compare on two scanners? 
+				//Or should comp make a openWords-type method without the braces check
+		//Creates Scanners for 3rd and 4th arguments
+		//Scanner firstComp = openWords(args[2], compResult);	//TODO Can these share a Printwriter?  
+		//Scanner secondComp = openWords(args[3], null);	//Or can I pass them null for the PrintWriter bc I don't want to checkBraces...
+
+		compareRead(args[2], args[3], compResult);
+		
+		
+	//PART THREE----------------------------------------------------------------
+		Scanner adlib = openWords(args[2], out);
 		prompt(adlib);
 		
-		if (in == null)	//Is this necessary (try/catch in openWords does the same?)
-			System.exit(1); 
 		
-		in.close();
 		out.close();
-
 	}
 }
