@@ -13,17 +13,14 @@ public class IOTester {
 	public static int numBraces = 0;
 	
 	//For reading
-	public static Scanner openWords(String fname, PrintWriter output) {
+	public static Scanner openWords(String fname, int fileNum) {	
 		File file = new File(fname);
 		Scanner input = null;
 
 		try {							//Check to see if the requested input file exists in the given directory
 			input = new Scanner(file);	//If so, create a new Scanner to grab the data
-			braceChecker(input);
 		} catch (FileNotFoundException ex) {	//Else, print to console the reason why and create that file with the error message inside
-			System.out.println("error u goob, no can do bc of " + ex.toString());
-			output.print("Part 1: Unable to Open File \n\n"); //Skips a line and adds the blank file needed for step 2.
-			
+			System.out.println("error u goob, no can do bc of " + ex.toString());			
 			return null;
 		}
 		return input;
@@ -92,6 +89,8 @@ public class IOTester {
 			return;
 		}
 		
+		//Truncate this to use openWords
+		
 		while (scanOne.hasNext()  && scanTwo.hasNext() ) {	//If one File>Scanner has stuff in it, try to compare to the other
 			strOne = scanOne.next();	//Creates strings from scanners from files passed in as arguments
 			strTwo = scanTwo.next();
@@ -118,35 +117,48 @@ public class IOTester {
 	
 	
 	//Adlib reader
-	public static void prompt(Scanner input, Scanner kb, PrintWriter output) {
+	public static ArrayList<String> prompt(Scanner input, Scanner kb, PrintWriter output) {
 		ArrayList<String> responses = new ArrayList<String>();
 		
 		//Grab part of speech
-		while(input.hasNext() ) {
-			String curLine = input.next();
+		while(input.hasNextLine() ) {	//Look for the next line
+			String curLine = input.nextLine();
 			String partOfSpeech;
 			String response;
 			
 			for(int i = 0; i < curLine.length(); i++) {
 				if(curLine.charAt(i) == '<') {
-					//TODO this won't work with multiple tage on one line
 					partOfSpeech = curLine.substring(curLine.indexOf("<") + 1, curLine.indexOf(">"));
-					curLine = curLine.substring( curLine.indexOf(">")); //cuts off everything before the first > hopefully
+					curLine = curLine.substring( curLine.indexOf(">")+1); //cuts off everything before the first > hopefully
 					
-					System.out.println("Give a " + partOfSpeech);
+					System.out.println("\nGive a " + partOfSpeech);
 					response = kb.next();
 					
-					responses.add(response);
+					responses.add(response);	//Inserts response into arraylist of responses
 				}
-				
-				
 			}
 		}
 		//Prints contents
 		for(String r : responses)
 			System.out.println("PartOfSpeech : " + r);
+		
+		return responses;
 	}
 	
+	//Adlib Writer
+	public static void writeAdlib(ArrayList<String> words, Scanner input, PrintWriter output) {
+			//Writes contents
+			for(String r : words)
+				while(input.hasNextLine() ) {	//Look for the next line
+					String curLine = input.nextLine();
+					
+					while(curLine.indexOf('<') != -1 && curLine.indexOf('<') != -1) { //Need this for something
+						curLine = curLine.substring(curLine.indexOf('<')) + r + curLine.substring(curLine.indexOf('>') +1 );
+					}
+					output.println(curLine);
+				}
+		}
+
 	/*Args in should be as follows:
 	 * any.txt  	<-- This should be a .java 
 	 * output.txt			
@@ -173,7 +185,7 @@ public class IOTester {
 		//Prints a blank line or an error message
 		
 		//Reads in first File
-		Scanner in = openWords(args[0], out); // First argument passed in via command line
+		Scanner in = openWords(args[0], 1); // First argument passed in via command line
 		
 		//Checks if braces are balanced and modifies 2nd arg file accordingly
 		if(in != null) {
@@ -196,8 +208,11 @@ public class IOTester {
 	//PART THREE----------------------------------------------------------------
 		Scanner keyboard = new Scanner(System.in);
 				
-		Scanner adlib = openWords(args[5], out);		//TODO Reuse OpenWords? or make another try catch system.......
-		prompt(adlib, keyboard, out);
+		Scanner adlib = openWords(args[5], 3);		//TODO Reuse OpenWords? or make another try catch system.......
+		
+		ArrayList<String> words = prompt(adlib, keyboard, out);
+		
+		writeAdlib(words, adlib, out);
 		
 		//Housekeeping
 		out.close();
