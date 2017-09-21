@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class IOTester {
@@ -91,7 +92,7 @@ public class IOTester {
 			return;
 		}
 		
-		while (scanOne.hasNext() ) {	//If one File>Scanner has stuff in it, try to compare to the other
+		while (scanOne.hasNext()  && scanTwo.hasNext() ) {	//If one File>Scanner has stuff in it, try to compare to the other
 			strOne = scanOne.next();	//Creates strings from scanners from files passed in as arguments
 			strTwo = scanTwo.next();
 			
@@ -104,21 +105,46 @@ public class IOTester {
 	            }
 			}
 		}
+		
+		//this is ugly
+		if(scanOne.hasNext() || scanTwo.hasNext() ) {
+			output.print("Files Not Identical");
+			return;
+		}
 		output.print("Files Identical");
 		scanOne.close();
 		scanTwo.close();
 	}
 	
+	
 	//Adlib reader
-	public static void prompt(Scanner input) {
-		//ArrayList responses = new ArrayList();
+	public static void prompt(Scanner input, Scanner kb, PrintWriter output) {
+		ArrayList<String> responses = new ArrayList<String>();
 		
-		//while(input.hasNext() )
-			//find tags
-			//store tags in var partOfSpeech;
-			//System.out.println("Give a " + partOfSpeech);
-			//response = kb.next()
-			//responses.add(response);
+		//Grab part of speech
+		while(input.hasNext() ) {
+			String curLine = input.next();
+			String partOfSpeech;
+			String response;
+			
+			for(int i = 0; i < curLine.length(); i++) {
+				if(curLine.charAt(i) == '<') {
+					//TODO this won't work with multiple tage on one line
+					partOfSpeech = curLine.substring(curLine.indexOf("<") + 1, curLine.indexOf(">"));
+					curLine = curLine.substring( curLine.indexOf(">")); //cuts off everything before the first > hopefully
+					
+					System.out.println("Give a " + partOfSpeech);
+					response = kb.next();
+					
+					responses.add(response);
+				}
+				
+				
+			}
+		}
+		//Prints contents
+		for(String r : responses)
+			System.out.println("PartOfSpeech : " + r);
 	}
 	
 	/*Args in should be as follows:
@@ -129,7 +155,9 @@ public class IOTester {
 	 * compareResult.txt
 	 * adlibIn.txt
 	 * adlibOut.txt
-	 */
+	 * 
+	 * 
+	 *///TODO clean this up, needs to only take 3 arguments
 	public static void main(String[] args) {
 		if (args.length < 4) { // Need two args, input and output files
 			System.out.println("No file given, not enough args");
@@ -166,9 +194,10 @@ public class IOTester {
 		
 		
 	//PART THREE----------------------------------------------------------------
-		Scanner adlib = openWords(args[2], out);
-		prompt(adlib);
-		
+		Scanner keyboard = new Scanner(System.in);
+				
+		Scanner adlib = openWords(args[5], out);		//TODO Reuse OpenWords? or make another try catch system.......
+		prompt(adlib, keyboard, out);
 		
 		//Housekeeping
 		out.close();
