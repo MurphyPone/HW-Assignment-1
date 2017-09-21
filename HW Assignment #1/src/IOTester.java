@@ -5,7 +5,8 @@ import java.util.Scanner;
 public class IOTester {
 	//TODO Method that returns scanner of first arg 									√√√√
 	//TODO Method that returns a PrintWriter second arg								√√√√
-	//TODO Method that Compares two files 
+	//TODO Method that Compares two files //Works but probably not air tight
+	//TODO create an adlib
 	
 	//fields for bracket checking
 	public static int numBraces = 0;
@@ -78,17 +79,18 @@ public class IOTester {
 		
 		String strOne;
 		String strTwo;
-
-		try {							//Check to see if the requested input file exists in the given directory
+		
+		
+		try {							//Check to see if the requested input files exist in the src directory
 			scanOne = new Scanner(first);	//If so, create a new Scanner to grab the data
 			scanTwo = new Scanner(second);
-			//TODO create PrintWriter here too to check if output file is present??
-		} catch (FileNotFoundException ex) {	//Else, print to console the reason why and create that file with the error message inside
+		} catch (FileNotFoundException ex) {	//Else, print to console the reason why and write to a file with the error message inside
+			//TODO Why doesn't this Write?	//Can't write at all from anywhere....
+			output.print("Part 2: Unable to Open File \n\n"); 
 			System.out.println("Part 2 error u goob, no can do bc of " + ex.toString());
-			output.print("Part 2: Unable to Open File \n\n"); //Skips a line and adds the blank file needed for step 2.
 			return;
 		}
-			
+		
 		while (scanOne.hasNext() ) {	//If one File>Scanner has stuff in it, try to compare to the other
 			strOne = scanOne.next();	//Creates strings from scanners from files passed in as arguments
 			strTwo = scanTwo.next();
@@ -102,7 +104,6 @@ public class IOTester {
 	            }
 			}
 		}
-		
 		output.print("Files Identical");
 		scanOne.close();
 		scanTwo.close();
@@ -130,10 +131,13 @@ public class IOTester {
 	 * adlibOut.txt
 	 */
 	public static void main(String[] args) {
-		if (args.length < 2) { // Need two args, input and output files
+		if (args.length < 4) { // Need two args, input and output files
 			System.out.println("No file given, not enough args");
 			System.exit(1);
 		}
+		
+		for(int i = 0; i < args.length; i++) 
+			System.out.println("arg " + i + " = " + args[i]);
 	
 	//PART ONE----------------------------------------------------------------
 		//Creates PrintWriter to output to second file 
@@ -145,10 +149,7 @@ public class IOTester {
 		
 		//Checks if braces are balanced and modifies 2nd arg file accordingly
 		if(in != null) {
-			System.out.println("Braces Balanced : " + braceChecker(in) );
-			in.reset();
-			
-			if(braceChecker(in))
+			if(braceChecker(in))	//Can only call braceChecker once per Scanner bc you can't reset the pointer.
 				out.print("Braces Balanced\n");
 			else 
 				out.print("Braces Not Balanced\n");
@@ -158,16 +159,9 @@ public class IOTester {
 		
 	//PART TWO----------------------------------------------------------------
 		
-		//Creates PrintWriter(s)? for the compare results for the 5th argument 
+		//Creates PrintWriter? for the compare results for the 5th argument 
 		PrintWriter compResult = openDictionary(args[4]);
-		
-		
-		//TODO can I just reuse my openWords method? and then do compare on two scanners? 
-				//Or should comp make a openWords-type method without the braces check
 		//Creates Scanners for 3rd and 4th arguments
-		//Scanner firstComp = openWords(args[2], compResult);	//TODO Can these share a Printwriter?  
-		//Scanner secondComp = openWords(args[3], null);	//Or can I pass them null for the PrintWriter bc I don't want to checkBraces...
-
 		compareRead(args[2], args[3], compResult);
 		
 		
@@ -176,6 +170,8 @@ public class IOTester {
 		prompt(adlib);
 		
 		
+		//Housekeeping
 		out.close();
+		compResult.close();
 	}
 }
