@@ -126,6 +126,23 @@ public class IOTester {
 	//Adlib Writer
 	public static void writeAdlib(ArrayList<String> words, Scanner input, PrintWriter output) {
 			//Writes contents
+		int i = 0;
+		//check size 
+		while(input.hasNextLine() ) {	//Look for the next line
+			String curLine = input.nextLine(); 	
+		
+			while(curLine.indexOf('<') != -1 && curLine.indexOf('>') != -1) { //Need this for something
+				if(i <words.size() ) {
+					curLine = curLine.substring(0,curLine.indexOf('<')) + words.get(i) + curLine.substring(curLine.indexOf('>') +1 );
+					i++;
+				}
+				output.println(curLine);
+			}	
+		}
+			
+		
+		
+		/*
 			for(String r : words)
 				while(input.hasNextLine() ) {	//Look for the next line
 					String curLine = input.nextLine();
@@ -135,9 +152,16 @@ public class IOTester {
 					}
 					output.println(curLine);
 				}
+			
+			 */
+			
+			//Currently this writes the first response in every postition, gets to the end of the file and can't write no more
 		}
+	
+	
+	
 
-	/*Args in should be as follows:
+	/*Args --> in should be as follows:
 	 * arg0.java
 	 * output.txt			
 	 * file1.txt		//for testing compare
@@ -189,17 +213,16 @@ public class IOTester {
 		
 		ArrayList<String> words = prompt(adlib, keyboard, out);
 		
-		//Need to recreate adlib to re-go through each line
-		Scanner adlibIN = openWords(args[4], 3);
+		//resets adlib
+		adlib = openWords(args[4], 3);
 
 		//TODO does adlib need to be reset in order to write?
-		writeAdlib(words, adlibIN, out);
+		writeAdlib(words, adlib, out);
 		
 		
 	//Housekeeping
 		out.close();
 		adlib.close();
-		adlibIN.close();
 		keyboard.close();
 	}
 }
