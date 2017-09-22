@@ -29,11 +29,9 @@ public class IOTester {
 	//Brace checker
 	public static boolean braceChecker(Scanner input) {
         String temp;	//Grabs the current line of the input 
-		
         //Running difference between { and }
         while(input.hasNext()) {
 			temp = input.next();
-			
 			for(int i = 0; i < temp.length(); i++) {  
 				//If numBraces ever dips below 0, then they ain't balanced!
 				if(numBraces >= 0 ) { 
@@ -44,8 +42,7 @@ public class IOTester {
 				} else
 					return false;
 	        }
-		}
-
+        }
         if(numBraces != 0) 
         		return false;
         else 
@@ -60,7 +57,7 @@ public class IOTester {
 		try {	//Check to see if the requested input file exists in the given directory
 			output = new PrintWriter(file);	//If so, create a new PrintWriter to modify the contents of the file
 		} catch (FileNotFoundException ex) {	//Should not be necessary to include some error output to file bc the PrintWriter should not get created if the file does not exist
-			System.out.println("error u goob, no can do bc of " + ex.toString());
+			System.out.println("Failed to be able to write to " + fname + "bc of " + ex.toString());
 			return null;
 		}
 		return output;
@@ -69,48 +66,29 @@ public class IOTester {
 	
 	//COMPARE TWO FILES
 	public static void compareRead(String one, String two, PrintWriter output) {
-		File first = new File(one);
-		File second = new File(two);
-		
-		Scanner scanOne;
-		Scanner scanTwo;
-		
+		Scanner scanOne = openWords(one, 1);
+		Scanner scanTwo = openWords(two, 2);
 		String strOne;
 		String strTwo;
 		
-		
-		try {							//Check to see if the requested input files exist in the src directory
-			scanOne = new Scanner(first);	//If so, create a new Scanner to grab the data
-			scanTwo = new Scanner(second);
-		} catch (FileNotFoundException ex) {	//Else, print to console the reason why and write to a file with the error message inside
-			//TODO Why doesn't this Write?	//Can't write at all from anywhere....
-			output.print("Part 2: Unable to Open File \n\n"); 
-			System.out.println("Part 2 error u goob, no can do bc of " + ex.toString());
-			return;
+		//TODO truncate this to use openWords
+		if(scanOne.hasNext() || scanTwo.hasNext() ) {	
+			while (scanOne.hasNext()  && scanTwo.hasNext() ) {	//If one File>Scanner has stuff in it, try to compare to the other
+					strOne = scanOne.next();	//Creates strings from scanners from files passed in as arguments
+					strTwo = scanTwo.next();
+					
+					for(int i = 0; i < strOne.length(); i++) {  
+			            if(strOne.charAt(i) != strTwo.charAt(i) ) {	//If every character is not identical, then the files not
+			            		output.print("Files Not Identical\n");
+			            		scanOne.close();
+			            		scanTwo.close();
+			            		return;
+			            }
+					}
+				}
 		}
-		
-		//Truncate this to use openWords
-		
-		while (scanOne.hasNext()  && scanTwo.hasNext() ) {	//If one File>Scanner has stuff in it, try to compare to the other
-			strOne = scanOne.next();	//Creates strings from scanners from files passed in as arguments
-			strTwo = scanTwo.next();
 			
-			for(int i = 0; i < strOne.length(); i++) {  
-	            if(strOne.charAt(i) != strTwo.charAt(i) ) {	//If every character is not identical, then the files not
-	            		output.print("Files Not Identical");
-	            		scanOne.close();
-	            		scanTwo.close();
-	            		return;
-	            }
-			}
-		}
-		
-		//this is ugly
-		if(scanOne.hasNext() || scanTwo.hasNext() ) {
-			output.print("Files Not Identical");
-			return;
-		}
-		output.print("Files Identical");
+		output.print("Files Identical \n");	//TODO \n isn't working here?
 		scanOne.close();
 		scanTwo.close();
 	}
@@ -152,23 +130,21 @@ public class IOTester {
 				while(input.hasNextLine() ) {	//Look for the next line
 					String curLine = input.nextLine();
 					
-					while(curLine.indexOf('<') != -1 && curLine.indexOf('<') != -1) { //Need this for something
-						curLine = curLine.substring(curLine.indexOf('<')) + r + curLine.substring(curLine.indexOf('>') +1 );
+					while(curLine.indexOf('<') != -1 && curLine.indexOf('>') != -1) { //Need this for something
+						curLine = curLine.substring(0,curLine.indexOf('<')) + r + curLine.substring(curLine.indexOf('>') +1 );
 					}
 					output.println(curLine);
 				}
 		}
 
 	/*Args in should be as follows:
-	 * any.txt  	<-- This should be a .java 
+	 * arg0.java
 	 * output.txt			
-	 * file1.txt
-	 * file2.txt
-	 * compareResult.txt
+	 * file1.txt		//for testing compare
+	 * file2.txt		//for testing compare
 	 * adlibIn.txt
-	 * adlibOut.txt
 	 * 
-	 * 
+	 *
 	 *///TODO clean this up, needs to only take 3 arguments
 	public static void main(String[] args) {
 		if (args.length < 4) { // Need two args, input and output files
@@ -193,29 +169,37 @@ public class IOTester {
 				out.print("Braces Balanced\n");
 			else 
 				out.print("Braces Not Balanced\n");
-			
 			in.close();
 		}
 		
 	//PART TWO----------------------------------------------------------------
-		
-		//Creates PrintWriter? for the compare results for the 5th argument 
-		PrintWriter compResult = openDictionary(args[4]);
+		out.print("\n");
+
+	//PART THREE----------------------------------------------------------------
 		//Creates Scanners for 3rd and 4th arguments
-		compareRead(args[2], args[3], compResult);
+		compareRead(args[2], args[3], out);
 		
-		
+	//PART FOUR ----------------------------------------------------------------
+		out.print("\n");
+
 	//PART THREE----------------------------------------------------------------
 		Scanner keyboard = new Scanner(System.in);
 				
-		Scanner adlib = openWords(args[5], 3);		//TODO Reuse OpenWords? or make another try catch system.......
+		Scanner adlib = openWords(args[4], 3);
 		
 		ArrayList<String> words = prompt(adlib, keyboard, out);
 		
-		writeAdlib(words, adlib, out);
+		//Need to recreate adlib to re-go through each line
+		Scanner adlibIN = openWords(args[4], 3);
+
+		//TODO does adlib need to be reset in order to write?
+		writeAdlib(words, adlibIN, out);
 		
-		//Housekeeping
+		
+	//Housekeeping
 		out.close();
-		compResult.close();
+		adlib.close();
+		adlibIN.close();
+		keyboard.close();
 	}
 }
