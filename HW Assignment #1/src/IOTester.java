@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class IOTester {
-	//TODO Method that returns scanner of first arg 									√√√√
-	//TODO Method that returns a PrintWriter second arg								√√√√
+	//TODOne Method that returns scanner of first arg
+	//TODOne Method that returns a PrintWriter second arg
 	//TODO Method that Compares two files //Works but probably not air tight
 	//TODO create an adlib
 	
@@ -71,7 +71,6 @@ public class IOTester {
 		String strOne;
 		String strTwo;
 		
-		//TODO truncate this to use openWords
 		if(scanOne.hasNext() || scanTwo.hasNext() ) {	
 			while (scanOne.hasNext()  && scanTwo.hasNext() ) {	//If one File>Scanner has stuff in it, try to compare to the other
 					strOne = scanOne.next();	//Creates strings from scanners from files passed in as arguments
@@ -88,7 +87,7 @@ public class IOTester {
 				}
 		}
 			
-		output.print("Files Identical \n");	//TODO \n isn't working here?
+		output.print("Files Identical \n");	
 		scanOne.close();
 		scanTwo.close();
 	}
@@ -110,80 +109,69 @@ public class IOTester {
 					curLine = curLine.substring( curLine.indexOf(">")+1); //cuts off everything before the first > hopefully
 					
 					System.out.println("\nGive a " + partOfSpeech);
-					response = kb.next();
+					response = kb.nextLine();	//TODO -- (FIXED?) ONLY ACCEPTS 1 WORD RESPONSE
 					
 					responses.add(response);	//Inserts response into arraylist of responses
 				}
 			}
 		}
-		//Prints contents
+		//Prints contents for testing purposes
 		for(String r : responses)
 			System.out.println("PartOfSpeech : " + r);
 		
 		return responses;
 	}
 	
-	//Adlib Writer
+	//Adlib Writer				
 	public static void writeAdlib(ArrayList<String> words, Scanner input, PrintWriter output) {
-			//Writes contents
-		int i = 0;
-		//check size 
+		int i = 0;	//Keeps track of current word
+		//TODO check size --Don;t remember what I meant????
 		while(input.hasNextLine() ) {	//Look for the next line
 			String curLine = input.nextLine(); 	
 		
-			while(curLine.indexOf('<') != -1 && curLine.indexOf('>') != -1) { //Need this for something
-				if(i <words.size() ) {
+			//TODO DOESNT CHANGE TAGS WITH SPACES  --Maybe because it only 
+			while(curLine.indexOf('<') != -1 && curLine.indexOf('>') != -1) { //While there is a valid tag in the line
+				if(i < words.size() ) {	//Checks to see if there are more words to fill
 					curLine = curLine.substring(0,curLine.indexOf('<')) + words.get(i) + curLine.substring(curLine.indexOf('>') +1 );
-					i++;
+					i++;	 //Goes to next word in user responses
+				} else { //IF there are fewer responses than tags
+					curLine = curLine.substring(0,curLine.indexOf('<')) + "*NO RESPONSE GIVEN*" + curLine.substring(curLine.indexOf('>') +1 );
 				}
-				output.println(curLine);
+				//output.println(curLine);
 			}	
-		}
-			
-		
-		
-		/*
-			for(String r : words)
-				while(input.hasNextLine() ) {	//Look for the next line
-					String curLine = input.nextLine();
-					
-					while(curLine.indexOf('<') != -1 && curLine.indexOf('>') != -1) { //Need this for something
-						curLine = curLine.substring(0,curLine.indexOf('<')) + r + curLine.substring(curLine.indexOf('>') +1 );
-					}
-					output.println(curLine);
-				}
-			
-			 */
-			
-			//Currently this writes the first response in every postition, gets to the end of the file and can't write no more
-		}
-	
-	
-	
+			output.println(curLine);
 
-	/*Args --> in should be as follows:
+		}
+	}
+
+	/*Args in should be as follows:
 	 * arg0.java
-	 * output.txt			
 	 * file1.txt		//for testing compare
-	 * file2.txt		//for testing compare
-	 * adlibIn.txt
+	 * adlibIn.txt1
+	 * AdlibWords.txt
+	 * output.txt	//TODO HOW TO HANDLE OUTPUT FILE IN CMD LINE ARGUMENT LIST --if <4 then output = 3? else output = 4
 	 * 
 	 *
-	 *///TODO clean this up, needs to only take 3 arguments
+	 */
 	public static void main(String[] args) {
-		if (args.length < 4) { // Need two args, input and output files
-			System.out.println("No file given, not enough args");
-			System.exit(1);
+		//TODO DETERMINE WHICH FILE IS THE OUTPUT FILE BASED ON # ARGS
+		PrintWriter out; 
+		
+		if (args.length < 4) { // If there is no preppedWords file given
+			//Creates PrintWriter to output to second file 
+			out = openDictionary(args[3]);	//Output is 4th
+			
+			//System.out.println("No file given, not enough args");
+			//System.exit(1);
+		} else {	// IF there is a 4th argument passed
+			out = openDictionary(args[4]);//Output is 5th
+
 		}
 		
 		for(int i = 0; i < args.length; i++) 
-			System.out.println("arg " + i + " = " + args[i]);
+			System.out.println("args[" + i + "] = " + args[i]);
 	
 	//PART ONE----------------------------------------------------------------
-		//Creates PrintWriter to output to second file 
-		PrintWriter out = openDictionary(args[1]);
-		//Prints a blank line or an error message
-		
 		//Reads in first File
 		Scanner in = openWords(args[0], 1); // First argument passed in via command line
 		
@@ -201,28 +189,44 @@ public class IOTester {
 
 	//PART THREE----------------------------------------------------------------
 		//Creates Scanners for 3rd and 4th arguments
-		compareRead(args[2], args[3], out);
+		compareRead(args[1], args[2], out);	//Modify args[X] to compare 
 		
 	//PART FOUR ----------------------------------------------------------------
 		out.print("\n");
 
-	//PART THREE----------------------------------------------------------------
-		Scanner keyboard = new Scanner(System.in);
-				
-		Scanner adlib = openWords(args[4], 3);
+	//PART FIVE----------------------------------------------------------------
+		//5.b
+		Scanner preppedWordsFile = openWords(args[3], 3);
+		Scanner adlib;
 		
-		ArrayList<String> words = prompt(adlib, keyboard, out);
-		
-		//resets adlib
-		adlib = openWords(args[4], 3);
+		if(preppedWordsFile != null) {
+			ArrayList<String> preppedWords = new ArrayList<String>();		//Initializes arraylist
+			
+			while(preppedWordsFile.hasNextLine()) {
+				preppedWords.add(preppedWordsFile.nextLine());	//Grabs words from file and adds them to arraylist
+			}
+			
+			adlib = openWords(args[2], 3);						//initializes the input to search for tags
 
-		//TODO does adlib need to be reset in order to write?
-		writeAdlib(words, adlib, out);
+			writeAdlib(preppedWords, adlib, out);				//Writes to file using prepared words
+			
+		} else {		//IF there are no preppedWords, then get user input
+			Scanner keyboard = new Scanner(System.in);
+			adlib = openWords(args[2], 3);
 		
+			ArrayList<String> words = prompt(adlib, keyboard, out);	//Gets user input for tags
+			
+			adlib = openWords(args[2], 3);	//Resets Adlib scanner		
+			
+			writeAdlib(words, adlib, out);	//Writes to output using user input
+			
+			//Housekeeping
+			adlib.close();
+			keyboard.close();
+		}
 		
 	//Housekeeping
 		out.close();
-		adlib.close();
-		keyboard.close();
+		
 	}
 }
