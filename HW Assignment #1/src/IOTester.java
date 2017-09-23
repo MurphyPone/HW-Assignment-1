@@ -157,6 +157,7 @@ public class IOTester {
 		//TODO DETERMINE WHICH FILE IS THE OUTPUT FILE BASED ON # ARGS
 		PrintWriter out; 
 		
+		//TODO this doesn't account for the runConfig order of files
 		if (args.length < 4) { // If there is no preppedWords file given
 			//Creates PrintWriter to output to second file 
 			out = openDictionary(args[3]);	//Output is 4th
