@@ -165,7 +165,6 @@ public class IOTester {
 			//System.exit(1);
 		} else {	// IF there is a 4th argument passed
 			out = openDictionary(args[4]);//Output is 5th
-
 		}
 		
 		for(int i = 0; i < args.length; i++) 
