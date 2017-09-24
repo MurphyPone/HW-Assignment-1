@@ -147,25 +147,18 @@ public class IOTester {
 	/*Args in should be as follows:
 	 * arg0.java
 	 * file1.txt		//for testing compare
-	 * adlibIn.txt1
-	 * AdlibWords.txt
-	 * output.txt	//TODO HOW TO HANDLE OUTPUT FILE IN CMD LINE ARGUMENT LIST --if <4 then output = 3? else output = 4
-	 * 
-	 *
+	 * adlibIn.txt
+	 * AdlibWords.txt 
+	 * output.txt	
 	 */
 	public static void main(String[] args) {
-		//TODO DETERMINE WHICH FILE IS THE OUTPUT FILE BASED ON # ARGS
 		PrintWriter out; 
 		
-		//TODO this doesn't account for the runConfig order of files
 		if (args.length < 4) { // If there is no preppedWords file given
 			//Creates PrintWriter to output to second file 
-			out = openDictionary(args[3]);	//Output is 4th
-			
-			//System.out.println("No file given, not enough args");
-			//System.exit(1);
-		} else {	// IF there is a 4th argument passed
-			out = openDictionary(args[4]);//Output is 5th
+			out = openDictionary(args[3]);	//output.txt is 4th argument
+		} else {	// If there is a 4th argument passed
+			out = openDictionary(args[4]);	//output.txt is 5th argument
 		}
 		
 		for(int i = 0; i < args.length; i++) 
