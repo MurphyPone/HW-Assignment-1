@@ -1,31 +1,58 @@
-import java.io.File;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Scanner;
+/**
+ * Class Description: 	This class is intended to interpret both user data and data gathered 
+ * 						from files passed in through the command line. Specific tasks include:
+ * 						 	1. Brace checking for .java files
+ * 						  	2. File comparison
+ * 						  	3. Replacing keywords from a given file with words provided 
+ * 								by the user
+ * @author MurphyP1
+ * @date 9/24/17
+ */
 
-public class IOTester {
-	//TODOne Method that returns scanner of first arg
-	//TODOne Method that returns a PrintWriter second arg
-	//TODO Method that Compares two files //Works but probably not air tight
-	//TODO create an adlib
+import java.io.*;
+import java.util.*;
+
+public class IOTester {	
 	
-	//fields for bracket checking
+	//Field for bracket checking
 	public static int numBraces = 0;
 	
+	/**
+	 * Returns a Scanner from the given filename String depending on whether of not 
+	 * that file exists
+	 * 
+	 * @author MurphyP1
+	 * @date 9/24/17
+	 * @method openWords
+	 * 
+	 * @param fname the name of the file to open with a Scanner 
+	 * @param fileNum a number which helps identify what part of the program an error occurs in
+	 * 
+	 * @return a Scanner to grab data from the files passed in via the command line
+	 */
 	//For reading
-	public static Scanner openWords(String fname, int fileNum) {	
+	public static Scanner openWords(String fname, PrintWriter output, int fileNum) {	
 		File file = new File(fname);
 		Scanner input = null;
 
 		try {							//Check to see if the requested input file exists in the given directory
 			input = new Scanner(file);	//If so, create a new Scanner to grab the data
-		} catch (FileNotFoundException ex) {	//Else, print to console the reason why and create that file with the error message inside
-			System.out.println("error u goob, no can do bc of " + ex.toString());			
+		} catch (FileNotFoundException ex) {	//TODO Else, print to console the reason why and create that file with the error message inside
+			System.out.println("error u goob, cannot open " + fname);		
+			output.print("Part " + fileNum + ": Unable to Open File\n\n");
 			return null;
 		}
 		return input;
 	}
-		
+	
+	/**
+	 * @author MurphyP1
+	 * date 9/24/2017
+	 * @method: braceChecker
+	 * 
+	 * @param: input
+	 * @return: boolean
+	 */
 	//Brace checker
 	public static boolean braceChecker(Scanner input) {
         String temp;	//Grabs the current line of the input 
@@ -48,7 +75,15 @@ public class IOTester {
         else 
 	        	return true;
 	}
-
+	
+	/**
+	 * @author MurphyP1
+	 * date 9/24/2017
+	 * @method: openDictionary
+	 * 
+	 * @param: fname
+	 * @return: PrintWriter
+	 */
 	//For writing
 	public static PrintWriter openDictionary(String fname) {
 		File file = new File(fname);
@@ -63,36 +98,60 @@ public class IOTester {
 		return output;
 	}
 	
-	
+	/**
+	 * @author MurphyP1
+	 * date 9/24/2017
+	 * @method: compareRead
+	 * 
+	 * @param: one, two, output
+	 * @return: void
+	 */
 	//COMPARE TWO FILES
 	public static void compareRead(String one, String two, PrintWriter output) {
-		Scanner scanOne = openWords(one, 1);
-		Scanner scanTwo = openWords(two, 2);
+		Scanner scanOne = openWords(one, output, 2);	//These share fileNum 2 because this is the second part of the program
+		Scanner scanTwo = openWords(two, output, 2);
 		String strOne;
 		String strTwo;
 		
-		if(scanOne.hasNext() || scanTwo.hasNext() ) {	
+														//They have to exist too
+		if( (scanOne.hasNext() || scanTwo.hasNext()) && (scanOne != null && scanTwo != null) ) {	
 			while (scanOne.hasNext()  && scanTwo.hasNext() ) {	//If one File>Scanner has stuff in it, try to compare to the other
-					strOne = scanOne.next();	//Creates strings from scanners from files passed in as arguments
-					strTwo = scanTwo.next();
-					
-					for(int i = 0; i < strOne.length(); i++) {  
+				strOne = scanOne.next();	//Creates strings from scanners from files passed in as arguments
+				strTwo = scanTwo.next();
+				
+				for(int i = 0; i < strOne.length(); i++) {  
+					//TODO try/catch herE?
+					try {
 			            if(strOne.charAt(i) != strTwo.charAt(i) ) {	//If every character is not identical, then the files not
 			            		output.print("Files Not Identical\n");
 			            		scanOne.close();
 			            		scanTwo.close();
 			            		return;
 			            }
+					} catch(StringIndexOutOfBoundsException e) {
+						output.print("Files Not Identical\n");
+						System.out.println(e + "Therefore they ain't the same");
+		            		scanOne.close();
+		            		scanTwo.close();
+		            		return;
 					}
 				}
+			}
+			//HAve to be in here bc this is the umbrella of existence
+			scanOne.close();
+			scanTwo.close();
 		}
-			
 		output.print("Files Identical \n");	
-		scanOne.close();
-		scanTwo.close();
 	}
 	
-	
+	/**
+	 * @author MurphyP1
+	 * date 9/24/2017
+	 * @method: prompt
+	 * 
+	 * @param: input, kb, output
+	 * @return: ArrayList<String>
+	 */
 	//Adlib reader
 	public static ArrayList<String> prompt(Scanner input, Scanner kb, PrintWriter output) {
 		ArrayList<String> responses = new ArrayList<String>();
@@ -122,6 +181,14 @@ public class IOTester {
 		return responses;
 	}
 	
+	/**
+	 * @author MurphyP1
+	 * date 9/24/2017
+	 * @method: writeAdlib
+	 * 
+	 * @param: words, input, output
+	 * @return: void
+	 */
 	//Adlib Writer				
 	public static void writeAdlib(ArrayList<String> words, Scanner input, PrintWriter output) {
 		int i = 0;	//Keeps track of current word
@@ -140,10 +207,17 @@ public class IOTester {
 				//output.println(curLine);
 			}	
 			output.println(curLine);
-
 		}
 	}
 
+	/**
+	 * @author MurphyP1
+	 * date 9/24/2017
+	 * @method: main
+	 * 
+	 * @param: args
+	 * @return: void
+	 */
 	/*Args in should be as follows:
 	 * arg0.java
 	 * file1.txt		//for testing compare
@@ -166,7 +240,7 @@ public class IOTester {
 	
 	//PART ONE----------------------------------------------------------------
 		//Reads in first File
-		Scanner in = openWords(args[0], 1); // First argument passed in via command line
+		Scanner in = openWords(args[0], out, 1); // First argument passed in via command line
 		
 		//Checks if braces are balanced and modifies 2nd arg file accordingly
 		if(in != null) {
@@ -182,14 +256,14 @@ public class IOTester {
 
 	//PART THREE----------------------------------------------------------------
 		//Creates Scanners for 3rd and 4th arguments
-		compareRead(args[1], args[2], out);	//Modify args[X] to compare 
+		compareRead(args[0], args[1], out);	//Modify args[X] to compare 
 		
 	//PART FOUR ----------------------------------------------------------------
 		out.print("\n");
 
 	//PART FIVE----------------------------------------------------------------
 		//5.b
-		Scanner preppedWordsFile = openWords(args[3], 3);
+		Scanner preppedWordsFile = openWords(args[3], out, 3);
 		Scanner adlib;
 		
 		if(preppedWordsFile != null) {
@@ -199,17 +273,17 @@ public class IOTester {
 				preppedWords.add(preppedWordsFile.nextLine());	//Grabs words from file and adds them to arraylist
 			}
 			
-			adlib = openWords(args[2], 3);						//initializes the input to search for tags
+			adlib = openWords(args[2], out, 3);						//initializes the input to search for tags
 
 			writeAdlib(preppedWords, adlib, out);				//Writes to file using prepared words
 			
 		} else {		//IF there are no preppedWords, then get user input
 			Scanner keyboard = new Scanner(System.in);
-			adlib = openWords(args[2], 3);
+			adlib = openWords(args[2], out, 3);
 		
 			ArrayList<String> words = prompt(adlib, keyboard, out);	//Gets user input for tags
 			
-			adlib = openWords(args[2], 3);	//Resets Adlib scanner		
+			adlib = openWords(args[2], out, 3);	//Resets Adlib scanner		
 			
 			writeAdlib(words, adlib, out);	//Writes to output using user input
 			
@@ -220,6 +294,5 @@ public class IOTester {
 		
 	//Housekeeping
 		out.close();
-		
 	}
 }
