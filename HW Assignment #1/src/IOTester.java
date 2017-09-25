@@ -39,7 +39,7 @@ public class IOTester {
 			input = new Scanner(file);	//If so, create a new Scanner to grab the data
 		} catch (FileNotFoundException ex) {	//TODO Else, print to console the reason why and create that file with the error message inside
 			System.out.println("error u goob, cannot open " + fname);		
-			output.print("Part " + fileNum + ": Unable to Open File\n\n");
+			output.print("Part " + fileNum + ": Unable to Open File\n");
 			return null;
 		}
 		return input;
@@ -83,9 +83,10 @@ public class IOTester {
 	 * 
 	 * @param: fname
 	 * @return: PrintWriter
+	 * @throws FileNotFoundException 
 	 */
 	//For writing
-	public static PrintWriter openDictionary(String fname) {
+	public static PrintWriter openDictionary(String fname) throws NullPointerException {
 		File file = new File(fname);
 		PrintWriter output = null;
 
@@ -112,21 +113,19 @@ public class IOTester {
 		Scanner scanTwo = openWords(two, output, 2);
 		String strOne;
 		String strTwo;
-		
-														//They have to exist too
-		if( (scanOne.hasNext() || scanTwo.hasNext()) && (scanOne != null && scanTwo != null) ) {	
+												//They have to exist too
+		if( (scanOne != null && scanTwo != null) && (scanOne.hasNext() && scanTwo.hasNext()) ) {	
 			while (scanOne.hasNext()  && scanTwo.hasNext() ) {	//If one File>Scanner has stuff in it, try to compare to the other
 				strOne = scanOne.next();	//Creates strings from scanners from files passed in as arguments
 				strTwo = scanTwo.next();
 				
 				for(int i = 0; i < strOne.length(); i++) {  
-					//TODO try/catch herE?
 					try {
-			            if(strOne.charAt(i) != strTwo.charAt(i) ) {	//If every character is not identical, then the files not
-			            		output.print("Files Not Identical\n");
-			            		scanOne.close();
-			            		scanTwo.close();
-			            		return;
+						if(strOne.charAt(i) != strTwo.charAt(i) ) {	//If every character is not identical, then the files not
+							output.print("Files Not Identical\n");
+		            		scanOne.close();
+		            		scanTwo.close();
+		            		return;
 			            }
 					} catch(StringIndexOutOfBoundsException e) {
 						output.print("Files Not Identical\n");
@@ -140,8 +139,13 @@ public class IOTester {
 			//HAve to be in here bc this is the umbrella of existence
 			scanOne.close();
 			scanTwo.close();
+			//This is not the best way to deal with this
+		} else { //Both files not exist and have next then
+			return; //Breakout bc openwords already printed the "Unable nonsense
 		}
-		output.print("Files Identical \n");	
+			output.print("Files Identical \n");	//Now this isn't printing
+			//If it makes it all they way through the if, then it should print
+			//Otherwise if one doesn't exist the only output should be "Part 2: Unable to Open File";
 	}
 	
 	/**
@@ -193,6 +197,7 @@ public class IOTester {
 	public static void writeAdlib(ArrayList<String> words, Scanner input, PrintWriter output) {
 		int i = 0;	//Keeps track of current word
 		//TODO check size --Don;t remember what I meant????
+		//TODO CHECK IF IT EXISTS --if adlibin.txt DNE, then you need to figure that out asap.
 		while(input.hasNextLine() ) {	//Look for the next line
 			String curLine = input.nextLine(); 	
 		
