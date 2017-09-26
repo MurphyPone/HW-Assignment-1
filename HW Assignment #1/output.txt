@@ -1,4 +1,4 @@
-Braces Not Balanced
+Braces Balanced
 
 Files Not Identical
 
