@@ -253,14 +253,9 @@ public class IOTester {
 	 * output.txt			//The output file
 	 */
 	public static void main(String[] args) {
-		PrintWriter out; 
+		PrintWriter out = writeWords("output.txt"); 
+		Scanner preppedWordsFile = null;
 		
-		if (args.length < 4) { // If there is file of prepared words given
-			//Creates PrintWriter to output to second file 
-			out = writeWords(args[3]);	//output.txt is 4th argument
-		} else {	// If there is a 4th argument passed
-			out = writeWords(args[4]);	//output.txt is 5th argument
-		}
 		
 		for(int i = 0; i < args.length; i++) 	//Prints the arguments for console viewing
 			System.out.println("args[" + i + "] = " + args[i]);	
@@ -290,21 +285,28 @@ public class IOTester {
 
 	//PART FIVE----------------------------------------------------------------
 		//5.b
-		Scanner preppedWordsFile = openWords(args[3], out, 3);//TODO I don't want this to output "unable" if it doesn;t exist
 		Scanner adlib;
 		
-		if(preppedWordsFile != null) {	//TODO If null, won't it say so in output, so why proceed...  
-			ArrayList<String> preppedWords = new ArrayList<String>();		//Initializes ArrayList of prepped words
+		if (args.length > 3) { // If there is file of prepared words give
+			preppedWordsFile = openWords(args[3], out, 3);
 			
-			while(preppedWordsFile.hasNextLine()) {
-				preppedWords.add(preppedWordsFile.nextLine());	//Grabs words from file and adds them to preppedWords
-			}
-			
-			adlib = openWords(args[2], out, 3);					//initializes the input to search for tags
+			if(preppedWordsFile != null) {	//TODO If null, won't it say so in output, so why proceed...  
+				ArrayList<String> preppedWords = new ArrayList<String>();		//Initializes ArrayList of prepped words
+				
+				while(preppedWordsFile.hasNextLine()) {
+					preppedWords.add(preppedWordsFile.nextLine());	//Grabs words from file and adds them to preppedWords
+				}
+				
+				adlib = openWords(args[2], out, 3);					//initializes the input to search for tags
 
-			writeAdlib(preppedWords, adlib, out);				//Writes to file using prepared words
-			
-		} else {		//IF there are no preppedWords, then get user input
+				writeAdlib(preppedWords, adlib, out);				//Writes to file using prepared words
+			} else {
+				//TODO close all Scanners and PrintWriters here too
+				out.close();
+				System.exit(1);
+			}
+		} else if(args.length < 4) { 
+			//IF there are no preppedWords, then get user input
 			Scanner keyboard = new Scanner(System.in);	//Create Scanner from keyboard
 			adlib = openWords(args[2], out, 3);			//Create a scanner from the file with tags
 		
