@@ -4,7 +4,4 @@ public class sad {{
 			System.out.println("All programming and no play makes peter a dull boy.");
 		}
 	}
-}
-{}
-{}
-{}
+

@@ -124,7 +124,7 @@ public class IOTester {
 		String strTwo;
 			
 		//If they both exist and have nextLines 
-		if( (scanOne != null && scanTwo != null) && (scanOne.hasNext() && scanTwo.hasNext()) ) {
+		if(scanOne != null && scanTwo != null) {
 			while (scanOne.hasNext()  && scanTwo.hasNext() ) {	//If both File>Scanners have stuff in them, try to compare to the other
 				strOne = scanOne.next();	//Creates strings from Scanners from Files from Strings passed in as arguments
 				strTwo = scanTwo.next();
@@ -145,42 +145,25 @@ public class IOTester {
 	            		return;
 					}
 				}
+			} 
+			if(scanOne.hasNext() || scanTwo.hasNext()) {
+				output.print("Files Not Identical\n");
+			} else {
+				output.print("Files Identical \n");
 			}
+			
 			//Scanners must close within this brace as this is the umbrella of existence.
 			scanOne.close();
 			scanTwo.close();
 			
-			//NOT MAKING IT INSIDE ANY OF THESE diagnostic conditionals 
-		} else if (scanOne == null || scanTwo == null) { //Both files not exist and have next then --Instead, check each case
-			//TODO THIS SHOULD PRINT UNABLE TO OPEN PART 2, but it doesn't
-			output.print("ASDFASDFASF");
-			scanOne.close();
-			scanTwo.close();
+		} else { //Both files not exist and have next then --Instead, check each case
+			//TODO Cannot close null, may cause errors
+			if(scanOne != null)
+				scanOne.close();
+			if(scanTwo != null)
+				scanTwo.close();
 			return; 
-		} else if( (scanOne.hasNext() && scanTwo.hasNext() ) == false || (scanTwo.hasNext() && scanOne.hasNext() == false)  ) {
-			output.print("Files Not Identical\n");
-    		scanOne.close();
-    		scanTwo.close();
-    		return;
-		} else {
-			output.print("Files Identical \n");
-			scanOne.close();
-			scanTwo.close();
-			//If it makes it all they way through the if, then it should print
-			//Otherwise if one doesn't exist the only output should be "Part 2: Unable to Open File";
 		}
-			
-		
-			
-			
-			/*
-			* //TODO This is not the best way to deal with this, might get output even though the file may not exist
-			if( (scanOne.hasNext() == null || scanTwo.next() == null) ) {
-				output.print("Files Not Identical\n");
-	    		scanOne.close();
-	    		scanTwo.close();
-	    		return;
-			} */ 
 	}
 	
 	/**
@@ -226,13 +209,13 @@ public class IOTester {
 	}
 	
 	/**
-	 * Writes the new 'adlib' to the output file repalcing the tags with either the user's input, or the prepared file 
+	 * Writes the new 'adlib' to the output file replacing the tags with either the user's input, or the prepared file 
 	 * 
 	 * @author MurphyP1
 	 * @date 9/26/17
 	 * @method writeAdlib
 	 * 
-	 * @param words the ArrayList of words to repalce the tags
+	 * @param words the ArrayList of words to replace the tags
 	 * @param input the Scanner which finds the tags 
 	 * @param output the PrintWriter object to write the results
 	 * 
@@ -241,21 +224,24 @@ public class IOTester {
 	//Adlib Writer				
 	public static void writeAdlib(ArrayList<String> words, Scanner input, PrintWriter output) {
 		int i = 0;	//Keeps track of current word
-		//TODO CHECK IF IT EXISTS --if adlibin.txt DNE, then you need to figure that out asap.  --Checked before call, already exists
-		while(input.hasNextLine() ) {	//Look for the next line
-			String curLine = input.nextLine(); 	
-		
-			//TODO COPY THIS LINE TO PROMPT? ALTHOUGH THERE IS NOT CURRENTLY AN ISSUE
-			while(curLine.indexOf('<') != -1 && curLine.indexOf('>') != -1) { //While there is a valid tag in the line
-				if(i < words.size() ) {	//Checks to see if there are more words to fill
-					curLine = curLine.substring(0,curLine.indexOf('<')) + words.get(i) + curLine.substring(curLine.indexOf('>') +1 );
-					i++;	 //Goes to next word in user responses
-				} else { //IF there are fewer responses than tags
-					curLine = curLine.substring(0,curLine.indexOf('<')) + "*NO RESPONSE GIVEN*" + curLine.substring(curLine.indexOf('>') +1 );
-				}
-			}	
-			output.println(curLine);
-		}
+
+		if(input != null) {
+			while(input.hasNextLine() ) {	//Look for the next line
+				String curLine = input.nextLine(); 	
+				
+				while(curLine.indexOf('<') != -1 && curLine.indexOf('>') != -1) { //While there is a valid tag in the line
+					if(i < words.size() ) {	//Checks to see if there are more words to fill
+						curLine = curLine.substring(0,curLine.indexOf('<')) + words.get(i) + curLine.substring(curLine.indexOf('>') +1 );
+						i++;	 //Goes to next word in user responses
+					} else { //IF there are fewer responses than tags
+						curLine = curLine.substring(0,curLine.indexOf('<')) + "*NO RESPONSE GIVEN*" + curLine.substring(curLine.indexOf('>') +1 );
+					}
+				}	
+				output.println(curLine);
+			}
+		} else 
+			System.out.println("Scanner input Does not exist!");
+			return;
 	}
 
 	/**
