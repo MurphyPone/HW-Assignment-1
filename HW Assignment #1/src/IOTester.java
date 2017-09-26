@@ -122,8 +122,9 @@ public class IOTester {
 		Scanner scanTwo = openWords(two, output, 2);
 		String strOne;
 		String strTwo;
-												//They have to exist too
-		if( (scanOne != null && scanTwo != null) && (scanOne.hasNext() && scanTwo.hasNext()) ) {	
+			
+		//If they both exist and have nextLines 
+		if( (scanOne != null && scanTwo != null) && (scanOne.hasNext() && scanTwo.hasNext()) ) {
 			while (scanOne.hasNext()  && scanTwo.hasNext() ) {	//If both File>Scanners have stuff in them, try to compare to the other
 				strOne = scanOne.next();	//Creates strings from Scanners from Files from Strings passed in as arguments
 				strTwo = scanTwo.next();
@@ -139,9 +140,9 @@ public class IOTester {
 					} catch(StringIndexOutOfBoundsException e) {//Should account for the error above?!!!??
 						output.print("Files Not Identical\n");
 						System.out.println(e + "Therefore they ain't the same");
-		            		scanOne.close();
-		            		scanTwo.close();
-		            		return;
+	            		scanOne.close();
+	            		scanTwo.close();
+	            		return;
 					}
 				}
 			}
@@ -149,13 +150,37 @@ public class IOTester {
 			scanOne.close();
 			scanTwo.close();
 			
-			//TODO This is not the best way to deal with this
-		} else { //Both files not exist and have next then
-			return; //Breakout bc openwords already printed the "Unable nonsense
-		}
-			output.print("Files Identical \n");	//Now this isn't printing
+			//NOT MAKING IT INSIDE ANY OF THESE diagnostic conditionals 
+		} else if (scanOne == null || scanTwo == null) { //Both files not exist and have next then --Instead, check each case
+			//TODO THIS SHOULD PRINT UNABLE TO OPEN PART 2, but it doesn't
+			output.print("ASDFASDFASF");
+			scanOne.close();
+			scanTwo.close();
+			return; 
+		} else if( (scanOne.hasNext() && scanTwo.hasNext() ) == false || (scanTwo.hasNext() && scanOne.hasNext() == false)  ) {
+			output.print("Files Not Identical\n");
+    		scanOne.close();
+    		scanTwo.close();
+    		return;
+		} else {
+			output.print("Files Identical \n");
+			scanOne.close();
+			scanTwo.close();
 			//If it makes it all they way through the if, then it should print
 			//Otherwise if one doesn't exist the only output should be "Part 2: Unable to Open File";
+		}
+			
+		
+			
+			
+			/*
+			* //TODO This is not the best way to deal with this, might get output even though the file may not exist
+			if( (scanOne.hasNext() == null || scanTwo.next() == null) ) {
+				output.print("Files Not Identical\n");
+	    		scanOne.close();
+	    		scanTwo.close();
+	    		return;
+			} */ 
 	}
 	
 	/**
@@ -216,7 +241,7 @@ public class IOTester {
 	//Adlib Writer				
 	public static void writeAdlib(ArrayList<String> words, Scanner input, PrintWriter output) {
 		int i = 0;	//Keeps track of current word
-		//TODO CHECK IF IT EXISTS --if adlibin.txt DNE, then you need to figure that out asap.
+		//TODO CHECK IF IT EXISTS --if adlibin.txt DNE, then you need to figure that out asap.  --Checked before call, already exists
 		while(input.hasNextLine() ) {	//Look for the next line
 			String curLine = input.nextLine(); 	
 		
@@ -290,7 +315,7 @@ public class IOTester {
 		if (args.length > 3) { // If there is file of prepared words give
 			preppedWordsFile = openWords(args[3], out, 3);
 			
-			if(preppedWordsFile != null) {	//TODO If null, won't it say so in output, so why proceed...  
+			if(preppedWordsFile != null) {	
 				ArrayList<String> preppedWords = new ArrayList<String>();		//Initializes ArrayList of prepped words
 				
 				while(preppedWordsFile.hasNextLine()) {
@@ -301,7 +326,6 @@ public class IOTester {
 
 				writeAdlib(preppedWords, adlib, out);				//Writes to file using prepared words
 			} else {
-				//TODO close all Scanners and PrintWriters here too
 				out.close();
 				System.exit(1);
 			}
